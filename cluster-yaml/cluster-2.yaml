@@ -27,6 +27,14 @@ spec:
   controlPlaneEndpoint:
     host: 10.38.1.17
     port: 6443
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: KubeadmControlPlane
+    namespace: nav-workspace-8rnws
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: NutanixCluster
+    namespace: nav-workspace-8rnws
   topology:
     class: nkp-nutanix
     controlPlane:
