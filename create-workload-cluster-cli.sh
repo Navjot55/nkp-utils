@@ -14,6 +14,7 @@ export REGISTRY_MIRROR_URL=registry.nutanixdemo.com/docker.io   # Required on Nu
 export current_dir=$(pwd)
 
 nkp create cluster nutanix --cluster-name $CLUSTER_NAME \
+    --kind-cluster-image $REGISTRY_MIRROR_URL/mesosphere/konvoy-bootstrap:v$NKP_VERSION \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
     --insecure \
     --kubernetes-service-load-balancer-ip-range $LB_IP_RANGE \
