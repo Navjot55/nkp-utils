@@ -1,0 +1,43 @@
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-app
+  labels:
+    app: todo
+spec:
+  replicas: 2  # Number of replicas (Pods) to run
+  selector:
+    matchLabels:
+      app: todo
+  template:
+    metadata:
+      labels:
+        app: todo
+    spec:
+      imagePullSecrets:
+      - name: acrreg
+      containers:
+      - name: tasky
+        image: nkpbootcamp.azurecr.io/nsagoo01/tasky:1.0  # Docker image for the container
+        ports:
+        - containerPort: 80  # Port on which the container is listening
+        env:
+        - name: MONGODB_URI
+          value: "mongodb://admin:password@mongo-nodeport-svc:27017"
+        - name: SECRET
+          value: "secret123"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-lb
+spec:
+  selector:
+    app: todo
+  ports:
+    - protocol: TCP
+      port: 80          # The port on which the service is exposed
+      targetPort: 8080   # The port on the pods
+  type: LoadBalancer     # This makes the service type LoadBalancer

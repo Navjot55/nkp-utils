@@ -1,0 +1,161 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  annotations:
+    caren.nutanix.com/cluster-uuid: 0194a375-8c09-7269-926e-9b65fd50864d
+  creationTimestamp: "2025-01-26T16:32:57Z"
+  finalizers:
+  - cluster.cluster.x-k8s.io
+  - kommander.mesosphere.io/capicluster-kommandercluster
+  generation: 3
+  labels:
+    cluster.x-k8s.io/cluster-name: cluster-1
+    cluster.x-k8s.io/provider: nutanix
+    infraId: ntnx-5d7b2
+    konvoy.d2iq.io/cluster-name: cluster-1
+    konvoy.d2iq.io/provider: nutanix
+    topology.cluster.x-k8s.io/owned: ""
+  name: cluster-1
+  namespace: kommander-default-workspace
+  resourceVersion: "3790014"
+  uid: d1fd78d3-8303-4053-878b-f2e05cd9c425
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 192.168.0.0/16
+    services:
+      cidrBlocks:
+      - 10.96.0.0/12
+  controlPlaneEndpoint:
+    host: 10.38.1.15
+    port: 6443
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: KubeadmControlPlane
+    name: cluster-1-9lcsb
+    namespace: kommander-default-workspace
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: NutanixCluster
+    name: cluster-1-sh8lp
+    namespace: kommander-default-workspace
+  topology:
+    class: nkp-nutanix
+    controlPlane:
+      metadata: {}
+      replicas: 1
+    variables:
+    - name: clusterConfig
+      value:
+        addons:
+          ccm:
+            credentials:
+              secretRef:
+                name: cluster-1-pc-credentials
+            strategy: HelmAddon
+          clusterAutoscaler:
+            strategy: HelmAddon
+          cni:
+            provider: Cilium
+            strategy: HelmAddon
+          csi:
+            defaultStorage:
+              provider: nutanix
+              storageClassConfig: volume
+            providers:
+              nutanix:
+                credentials:
+                  secretRef:
+                    name: cluster-1-pc-credentials-for-csi
+                storageClassConfigs:
+                  volume:
+                    allowExpansion: false
+                    parameters:
+                      csi.storage.k8s.io/fstype: ext4
+                      description: CSI StorageClass nutanix-volume for cluster-1
+                      hypervisorAttached: ENABLED
+                      storageContainer: default
+                      storageType: NutanixVolumes
+                    reclaimPolicy: Delete
+                    volumeBindingMode: WaitForFirstConsumer
+                strategy: HelmAddon
+            snapshotController:
+              strategy: HelmAddon
+          nfd:
+            strategy: HelmAddon
+          serviceLoadBalancer:
+            configuration:
+              addressRanges:
+              - end: 10.38.1.17
+                start: 10.38.1.16
+            provider: MetalLB
+        controlPlane:
+          nutanix:
+            machineDetails:
+              bootType: uefi
+              cluster:
+                name: PHX-SPOC001-1
+                type: name
+              image:
+                name: nkp-rocky-9.4-release-1.29.9-20241008013213.qcow2
+                type: name
+              memorySize: 16Gi
+              project:
+                name: lab
+                type: name
+              subnets:
+              - name: primary
+                type: name
+              systemDiskSize: 80Gi
+              vcpuSockets: 4
+              vcpusPerSocket: 1
+        encryptionAtRest:
+          providers:
+          - secretbox: {}
+        globalImageRegistryMirror:
+          url: http://registry.nutanixdemo.com/docker.io
+        nutanix:
+          controlPlaneEndpoint:
+            host: 10.38.1.15
+            port: 6443
+            virtualIP:
+              provider: KubeVIP
+          prismCentralEndpoint:
+            credentials:
+              secretRef:
+                name: cluster-1-pc-credentials
+            insecure: true
+            url: https://10.38.1.10:9440
+    version: v1.29.9
+    workers:
+      machineDeployments:
+      - class: default-worker
+        metadata:
+          annotations:
+            cluster.x-k8s.io/cluster-api-autoscaler-node-group-max-size: "4"
+            cluster.x-k8s.io/cluster-api-autoscaler-node-group-min-size: "4"
+        name: md-0
+        variables:
+          overrides:
+          - name: workerConfig
+            value:
+              nutanix:
+                machineDetails:
+                  bootType: uefi
+                  cluster:
+                    name: PHX-SPOC001-1
+                    type: name
+                  image:
+                    name: nkp-rocky-9.4-release-1.29.9-20241008013213.qcow2
+                    type: name
+                  memorySize: 32Gi
+                  project:
+                    name: lab
+                    type: name
+                  subnets:
+                  - name: primary
+                    type: name
+                  systemDiskSize: 80Gi
+                  vcpuSockets: 8
+                  vcpusPerSocket: 1
